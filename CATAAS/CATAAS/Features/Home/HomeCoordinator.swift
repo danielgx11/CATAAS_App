@@ -8,7 +8,10 @@
 import UIKit
 import SwiftUI
 
-protocol HomeCoordinatorDelegate { }
+protocol HomeCoordinatorProtocol {
+    
+    func goToDetails(with identifier: String)
+}
 
 class HomeCoordinator: Coordinator {
     
@@ -27,8 +30,17 @@ class HomeCoordinator: Coordinator {
     // MARK: - METHODS
     
     func start() {
-        let viewController = factory.makeHostingHomeView()
+        let viewController = factory.makeHostingHomeView(navigationController: navigationController)
         navigationController.pushViewController(viewController, animated: true)
     }
+
+}
+
+// MARK: - HomeCoordinatorProtocol
+
+extension HomeCoordinator: HomeCoordinatorProtocol {
     
+    func goToDetails(with identifier: String) {
+        // TODO: go to details
+    }
 }

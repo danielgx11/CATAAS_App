@@ -11,6 +11,7 @@ enum ServiceError: Error {
     case unknown
     case invalidUrl
     case invalidStatusCode
+    case dataTypeMismatch
     
     var localizedDescription: String {
         switch self {
@@ -20,6 +21,8 @@ enum ServiceError: Error {
             return "Invalid URL, try again!"
         case .invalidStatusCode:
             return "Invalid status code"
+        case .dataTypeMismatch:
+            return "Type Mismatch error"
         }
     }
 }

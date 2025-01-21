@@ -9,4 +9,5 @@ import Testing
 
 extension Tag {
     @Tag static var home: Self
+    @Tag static var detail: Self
 }

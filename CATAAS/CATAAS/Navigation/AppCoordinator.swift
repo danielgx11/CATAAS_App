@@ -17,6 +17,8 @@ class AppCoordinator: Coordinator {
     let factory: AppCoordinatorFactoryProtocol
     let window: UIWindow?
     
+    deinit { print("AppCoordinator deallocated") }
+        
     // MARK: - INITIALIZERS
     
     init(factory: AppCoordinatorFactoryProtocol, navigationController: UINavigationController, window: UIWindow?) {
@@ -35,6 +37,19 @@ class AppCoordinator: Coordinator {
     
     private func showHome() {
         let homeCoordinator = factory.makeHomeCoordinator(navigationController: navigationController)
-        homeCoordinator.start()
+        DispatchQueue.main.async {
+            homeCoordinator.delegate = self
+            homeCoordinator.start()
+        }
+    }
+}
+
+// MARK: - HomeCoordinatorDelegate
+
+extension AppCoordinator: HomeCoordinatorDelegate {
+    
+    func goToDetails(with identifier: String) {
+        let detailCoordinator = factory.makeDetailCoordinator(navigationController: navigationController)
+        detailCoordinator.goToDetails(with: identifier)
     }
 }

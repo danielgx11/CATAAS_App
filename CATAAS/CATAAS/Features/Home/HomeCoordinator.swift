@@ -5,10 +5,14 @@
 //  Created by Daniel Gomes Xavier on 17/01/25.
 //
 
-import UIKit
 import SwiftUI
 
 protocol HomeCoordinatorProtocol {
+    
+    func goToDetails(with identifier: String)
+}
+
+protocol HomeCoordinatorDelegate: AnyObject {
     
     func goToDetails(with identifier: String)
 }
@@ -19,10 +23,12 @@ class HomeCoordinator: Coordinator {
     
     var navigationController: UINavigationController
     var factory: HomeFactoryViewControllerProtocol
-    
+    weak var delegate: HomeCoordinatorDelegate?
+        
     // MARK: - INITIALIZERS
     
-    init(factory: HomeFactoryViewControllerProtocol, navigationController: UINavigationController) {
+    init(factory: HomeFactoryViewControllerProtocol,
+         navigationController: UINavigationController) {
         self.factory = factory
         self.navigationController = navigationController
     }
@@ -30,7 +36,7 @@ class HomeCoordinator: Coordinator {
     // MARK: - METHODS
     
     func start() {
-        let viewController = factory.makeHostingHomeView(navigationController: navigationController)
+        let viewController = factory.makeHostingHomeView(navigationController: navigationController, coordinator: self)
         navigationController.pushViewController(viewController, animated: true)
     }
 
@@ -41,6 +47,6 @@ class HomeCoordinator: Coordinator {
 extension HomeCoordinator: HomeCoordinatorProtocol {
     
     func goToDetails(with identifier: String) {
-        // TODO: go to details
+        delegate?.goToDetails(with: identifier)
     }
 }

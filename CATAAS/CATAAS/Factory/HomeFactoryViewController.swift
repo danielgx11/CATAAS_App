@@ -8,18 +8,22 @@
 import SwiftUI
 
 protocol HomeFactoryViewControllerProtocol {
-    func makeHostingHomeView(navigationController: UINavigationController) -> UIHostingController<HomeView>
+    func makeHostingHomeView(
+        navigationController: UINavigationController,
+        coordinator: HomeCoordinatorProtocol
+    ) -> UIHostingController<HomeView>
 }
 
 struct HomeFactoryViewController: @preconcurrency HomeFactoryViewControllerProtocol {
     
     @MainActor
-    func makeHostingHomeView(navigationController: UINavigationController) -> UIHostingController<HomeView> {
+    func makeHostingHomeView(
+        navigationController: UINavigationController,
+        coordinator: HomeCoordinatorProtocol
+    ) -> UIHostingController<HomeView> {
         let service = ServiceManager()
         let useCase = HomeUseCase(service: service)
         let factory = HomeViewFactory()
-        let coordinatorFactory = HomeFactoryViewController()
-        let coordinator = HomeCoordinator(factory: coordinatorFactory, navigationController: navigationController)
         let viewModel = HomeViewModel(useCase: useCase, factory: factory, coordinator: coordinator)
         return UIHostingController(rootView: HomeView(viewModel: viewModel))
     }

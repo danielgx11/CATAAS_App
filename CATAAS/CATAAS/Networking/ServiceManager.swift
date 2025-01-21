@@ -28,6 +28,13 @@ final class ServiceManager: ServiceManagerProtocol {
             throw ServiceError.invalidStatusCode
         }
         
+        if T.self == Data.self {
+            guard let rawData = data as? T else {
+                throw ServiceError.dataTypeMismatch
+            }
+            return rawData
+        }
+        
         let decodedData = try JSONDecoder().decode(T.self, from: data)
         return decodedData
     }

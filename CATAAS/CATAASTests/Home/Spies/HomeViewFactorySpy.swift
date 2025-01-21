@@ -10,7 +10,6 @@
 final class HomeViewFactorySpy: HomeViewFactoryProtocol {
 
     private(set) var buildEntityCalled = false
-    private(set) var buildUserLocationEntityCalled = false
     
     func buildHomeViewEntity(response: HomeUseCaseResponse) -> [HomeViewEntity] {
         buildEntityCalled = true

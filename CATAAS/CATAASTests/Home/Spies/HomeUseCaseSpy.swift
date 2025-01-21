@@ -13,10 +13,10 @@ final class HomeUseCaseSpy: HomeUseCaseProtocol {
     
     var shouldThrowError = false
     
-    private(set) var fetchLocationCalled = false
+    private(set) var fetchItemsCalled = false
     
     func fetchItems() async throws -> HomeUseCaseResponse {
-        fetchLocationCalled = true
+        fetchItemsCalled = true
         
         if shouldThrowError {
             throw MessageError.default

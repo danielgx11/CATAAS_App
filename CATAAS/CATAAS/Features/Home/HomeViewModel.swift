@@ -31,6 +31,7 @@ final class HomeViewModel {
         self.useCase = useCase
         self.factory = factory
         self.coordinator = coordinator
+        print("HomeViewModel initialized with coordinator: \(coordinator)")
     }
 }
 

@@ -15,3 +15,7 @@ protocol Coordinator: CoordinatorDelegate {
     
     func start()
 }
+
+extension Coordinator {
+    func start() { }
+}

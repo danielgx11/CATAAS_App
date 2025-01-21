@@ -40,12 +40,12 @@ extension HomeViewModelTests {
         do {
             let items = try await useCaseSpy.fetchItems()
             
-            #expect(useCaseSpy.fetchLocationCalled)
+            #expect(useCaseSpy.fetchItemsCalled)
             #expect(!shouldShowError, "Error was not expect to occur")
             #expect(items.data.count == HomeUseCaseResponse.stub().data.count)
             #expect(items.data.first?.identifier == HomeUseCaseResponse.stub().data.first?.identifier)
         } catch {
-            #expect(useCaseSpy.fetchLocationCalled)
+            #expect(useCaseSpy.fetchItemsCalled)
             #expect(shouldShowError, "Error should occur")
             #expect(error as? MessageError == MessageError.default)
         }

@@ -11,31 +11,89 @@ protocol ServiceManagerProtocol {
     func fetch<T: Decodable>(request: ServiceRequest, type: T.Type) async throws -> T
 }
 
-final class ServiceManager: ServiceManagerProtocol {
+final class ServiceManager {
     
-    func fetch<T>(request: ServiceRequest, type: T.Type) async throws -> T where T : Decodable {
-        guard let baseUrl = URL(string: request.baseUrl)else {
+    let urlSession = URLSession.shared
+    let decoder = JSONDecoder()
+    
+    // MARK: - METHODS
+    
+    private func performRequest(for request: ServiceRequest) async throws -> (Data, URLResponse) {
+        guard let url = buildURL(from: request) else {
             throw ServiceError.invalidUrl
         }
         
-        let url = baseUrl.appending(path: request.path) 
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method
         
-        let (data, response) = try await URLSession.shared.data(for: urlRequest)
-        
-        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-            throw ServiceError.invalidStatusCode
+        return try await urlSession.data(for: urlRequest)
+    }
+    
+    private func buildURL(from request: ServiceRequest) -> URL? {
+        guard let baseUrl = URL(string: request.baseUrl) else {
+            return nil
         }
         
-        if T.self == Data.self {
-            guard let rawData = data as? T else {
-                throw ServiceError.dataTypeMismatch
-            }
+        return baseUrl.appendingPathComponent(request.path)
+    }
+    
+    private func validateResponse(_ response: URLResponse, data: Data) throws {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw ServiceError.invalidResponse
+        }
+        
+        switch httpResponse.statusCode {
+        case 200...299:
+            return
+        case 400:
+            throw ServiceError.badRequest
+        case 401:
+            throw ServiceError.unauthorized
+        case 403:
+            throw ServiceError.forbidden
+        case 404:
+            throw ServiceError.notFound
+        case 500...599:
+            throw ServiceError.serverError
+        default:
+            throw ServiceError.unknownStatusCode(httpResponse.statusCode)
+        }
+    }
+    
+    private func decodeData<T>(_ data: Data, as type: T.Type) throws -> T where T: Decodable {
+        if T.self == Data.self, let rawData = data as? T {
             return rawData
         }
         
-        let decodedData = try JSONDecoder().decode(T.self, from: data)
-        return decodedData
+        do {
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            throw ServiceError.decodingFailed(error)
+        }
+    }
+    
+    private func mapError(_ error: Error) -> ServiceError {
+        if let serviceError = error as? ServiceError {
+            return serviceError
+        } else if (error as NSError).domain == NSURLErrorDomain {
+            return .networkFailure(error)
+        }
+        
+        return .unknown(error)
+    }
+}
+
+// MARK: - SERVICE MANAGER PROTOCOL
+
+extension ServiceManager: ServiceManagerProtocol {
+    
+    func fetch<T>(request: ServiceRequest, type: T.Type) async throws -> T where T : Decodable {
+        do {
+            let (data, response) = try await performRequest(for: request)
+            try validateResponse(response, data: data)
+            return try decodeData(data, as: type)
+        } catch {
+            throw mapError(error)
+        }
     }
 }

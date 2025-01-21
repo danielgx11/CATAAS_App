@@ -13,6 +13,13 @@ struct DetailView: View {
 
     fileprivate enum Constants {
         static let navigationTitle = "Cat Detail"
+        static let messageErrorToLoadImage = "Image download failed sorry for the incovenience"
+        
+        enum Accessibility {
+            static let loadingViewId = "loading_view"
+            static let catImageId = "cat_image_identifier"
+            static let asyncCatImageId = "cat_image_identifier_async"
+        }
     }
     
     // MARK: - PROPERTIES
@@ -31,15 +38,15 @@ struct DetailView: View {
             switch viewModel.viewState {
             case let .hasData(entity):
                 contentView(with: entity)
-            case .hasError:
-                errorView()
+            case let .hasError(message):
+                errorView(message: message)
             case let .isLoading(status):
                 loadingView(isLoading: status)
-                    .accessibilityIdentifier("loading_view")
+                    .accessibilityIdentifier(Constants.Accessibility.loadingViewId)
             }
         }
         .navigationTitle(Constants.navigationTitle)
-        .onAppear {
+        .task {
             viewModel.initState()
         }
     }
@@ -54,7 +61,7 @@ struct DetailView: View {
     private func catImage(with entity: DetailViewEntity) -> some View {
         if let uiImage = UIImage(data: entity.imageData) {
             Image(uiImage: uiImage)
-                .accessibilityIdentifier("cat_image_identifier")
+                .accessibilityIdentifier(Constants.Accessibility.catImageId)
         } else {
             catAsyncImage(with: entity.imageUrl)
         }
@@ -70,17 +77,16 @@ struct DetailView: View {
                     .resizable()
                     .scaledToFit()
             default:
-                Image("error-icon")
-                    .resizable()
-                    .scaledToFit()
+                errorView(message: Constants.messageErrorToLoadImage)
             }
         }
-        .accessibilityIdentifier("cat_image_identifier_async")
+        .accessibilityIdentifier(Constants.Accessibility.asyncCatImageId)
     }
 
     
-    private func errorView() -> some View {
-        EmptyView()
+    private func errorView(message: String) -> some View {
+        ErrorView(textMessage: message)
+            .padding()
     }
     
     @ViewBuilder

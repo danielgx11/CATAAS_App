@@ -7,6 +7,6 @@
 
 enum DetailViewState {
     case hasData(DetailViewEntity)
-    case hasError
+    case hasError(message: String)
     case isLoading(Bool)
 }

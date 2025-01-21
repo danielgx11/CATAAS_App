@@ -5,7 +5,7 @@
 //  Created by Daniel Gomes Xavier on 17/01/25.
 //
 
-protocol HomeViewFactoryProtocol {
+protocol HomeViewFactoryProtocol: ViewFactoryProtocol {
     func buildHomeViewEntity(response: HomeUseCaseResponse) -> [HomeViewEntity]
 }
 

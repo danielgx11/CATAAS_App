@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol DetailViewFactoryProtocol {
+protocol DetailViewFactoryProtocol: ViewFactoryProtocol {
     func buildDetailViewEntity(imageData: Data, catIdentifier: String) -> DetailViewEntity
 }
 

@@ -25,6 +25,10 @@ final class HomeViewModel {
     private let factory: HomeViewFactoryProtocol
     private let coordinator: HomeCoordinatorProtocol
     
+    deinit {
+        debugPrint("DetailViewModel was deallocated")
+    }
+    
     // MARK: - INITIALIZERS
     
     init(useCase: HomeUseCaseProtocol, factory: HomeViewFactoryProtocol, coordinator: HomeCoordinatorProtocol) {
@@ -50,8 +54,7 @@ extension HomeViewModel {
                 let entity = factory.buildHomeViewEntity(response: response)
                 viewState = .hasData(entity)
             } catch {
-                debugPrint(error.localizedDescription)
-                // TODO: handle errors
+                viewState = .hasError(message: factory.buildErrorMessage(with: error))
             }
         }
     }

@@ -28,6 +28,10 @@ final class DetailViewModel {
     
     // MARK: - INITIALIZERS
     
+    deinit {
+        debugPrint("DetailViewModel was deallocated")
+    }
+    
     init(
         useCase: DetailUseCaseProtocol,
         factory: DetailViewFactoryProtocol,
@@ -56,8 +60,7 @@ extension DetailViewModel {
                 let entity = factory.buildDetailViewEntity(imageData: response, catIdentifier: catIdentifier)
                 viewState = .hasData(entity)
             } catch {
-                debugPrint(error.localizedDescription)
-                // TODO: handle errors
+                viewState = .hasError(message: factory.buildErrorMessage(with: error))
             }
         }
     }

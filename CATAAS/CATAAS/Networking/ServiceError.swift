@@ -7,22 +7,49 @@
 
 import Foundation
 
-enum ServiceError: Error {
-    case unknown
+enum ServiceError: LocalizedError {
     case invalidUrl
+    case invalidResponse
     case invalidStatusCode
+    case badRequest
+    case unauthorized
+    case forbidden
+    case notFound
+    case serverError
+    case unknownStatusCode(Int)
     case dataTypeMismatch
+    case decodingFailed(Error)
+    case networkFailure(Error)
+    case unknown(Error)
     
-    var localizedDescription: String {
+    var errorDescription: String? {
         switch self {
-        case .unknown:
-            return "Unknown error"
         case .invalidUrl:
-            return "Invalid URL, try again!"
+            return "The URL is invalid"
+        case .invalidResponse:
+            return "The server response is invalid"
         case .invalidStatusCode:
-            return "Invalid status code"
+            return "The status code is invalid"
+        case .badRequest:
+            return "Bad request."
+        case .unauthorized:
+            return "Unauthorized access."
+        case .forbidden:
+            return "Access to this resource is forbidden"
+        case .notFound:
+            return "The requested resource was not found"
+        case .serverError:
+            return "The server encountered an error."
+        case let .unknownStatusCode(code):
+            return "Unexpected status code: \(code)"
         case .dataTypeMismatch:
-            return "Type Mismatch error"
+            return "The response data type does not match the expected type"
+        case let .decodingFailed(error):
+            return "Failed to decode the response: \(error.localizedDescription)"
+        case let .networkFailure(error):
+            return "A network error occurred: \(error.localizedDescription)"
+        case let .unknown(error):
+            return "An unknown error occurred: \(error.localizedDescription)"
         }
     }
 }

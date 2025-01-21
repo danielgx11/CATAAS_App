@@ -17,6 +17,11 @@ struct HomeView: View {
     
     fileprivate enum Constants {
         static let navigationTitle = "Cat as a Service"
+        
+        enum Accessibility {
+            static let loadingViewId = "loading_view"
+            static let itemCellId = "item_cell"
+        }
     }
     
     // MARK: - PROPERTIES
@@ -37,11 +42,11 @@ struct HomeView: View {
             case let .hasData(homeViewEntity):
                 contentView(with: homeViewEntity)
                     .navigationTitle(Constants.navigationTitle)
-            case .hasError:
-                errorView()
+            case let .hasError(message):
+                errorView(message: message)
             case let .isLoading(status):
                 loadingView(isLoading: status)
-                    .accessibilityIdentifier("loading_view")
+                    .accessibilityIdentifier(Constants.Accessibility.loadingViewId)
             }
         }
         .task {
@@ -54,7 +59,7 @@ struct HomeView: View {
             LazyVStack {
                 ForEach(items, id: \.identifier) { item in
                     cellView(item: item)
-                        .accessibilityIdentifier("item_cell")
+                        .accessibilityIdentifier(Constants.Accessibility.itemCellId)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .onTapGesture {
@@ -106,8 +111,9 @@ struct HomeView: View {
         }
     }
     
-    private func errorView() -> some View {
-        EmptyView()
+    private func errorView(message: String) -> some View {
+        ErrorView(textMessage: message)
+            .padding()
     }
     
     @ViewBuilder

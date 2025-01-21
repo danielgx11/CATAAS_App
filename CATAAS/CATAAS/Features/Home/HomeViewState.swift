@@ -7,6 +7,6 @@
 
 enum HomeViewState {
     case hasData([HomeViewEntity])
-    case hasError
+    case hasError(message: String)
     case isLoading(Bool)
 }

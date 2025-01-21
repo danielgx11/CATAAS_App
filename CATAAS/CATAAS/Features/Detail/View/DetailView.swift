@@ -19,6 +19,7 @@ struct DetailView: View {
             static let loadingViewId = "loading_view"
             static let catImageId = "cat_image_identifier"
             static let asyncCatImageId = "cat_image_identifier_async"
+            static let errorViewId = "error_view"
         }
     }
     
@@ -40,6 +41,7 @@ struct DetailView: View {
                 contentView(with: entity)
             case let .hasError(message):
                 errorView(message: message)
+                    .accessibilityIdentifier(Constants.Accessibility.errorViewId)
             case let .isLoading(status):
                 loadingView(isLoading: status)
                     .accessibilityIdentifier(Constants.Accessibility.loadingViewId)

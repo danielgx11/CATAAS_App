@@ -26,7 +26,9 @@ final class HomeViewUITests: XCTestCase {
     func testLoadingViewAppears() {
         let loadingView = app.activityIndicators["loading_view"]
         
-        XCTAssertTrue(loadingView.waitForExistence(timeout: 3), "The Loading View should exist")
+        debugPrint(app.debugDescription)
+        
+        XCTAssertTrue(loadingView.exists, "The Loading View should exist")
     }
     
     func testTextIsNotEmpty() {
@@ -42,9 +44,7 @@ final class HomeViewUITests: XCTestCase {
         
         let delayExpectation = XCTestExpectation(description: "Wait for API to load items")
         _ = XCTWaiter.wait(for: [delayExpectation], timeout: 3.0)
-        
-        debugPrint(app.debugDescription)
-        
+                
         let firstCell = app.staticTexts["item_cell"].firstMatch
         XCTAssertTrue(firstCell.waitForExistence(timeout: 3), "The first cell should exist in the LazyVStack.")
         firstCell.tap()
@@ -56,9 +56,7 @@ final class HomeViewUITests: XCTestCase {
         
         let delayExpectation = XCTestExpectation(description: "Wait for API to load items")
         _ = XCTWaiter.wait(for: [delayExpectation], timeout: 3.0)
-        
-        debugPrint(app.debugDescription)
-        
+                
         let firstCell = app.staticTexts["item_cell"].firstMatch
         XCTAssertTrue(firstCell.waitForExistence(timeout: 3), "The first cell should exist in the LazyVStack.")
         firstCell.tap()

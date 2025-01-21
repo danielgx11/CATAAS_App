@@ -13,7 +13,7 @@ extension ViewFactoryProtocol {
     
     func buildErrorMessage(with error: Error) -> String {
         if let serviceError = error as? ServiceError {
-            return "Service Error: \(error.localizedDescription)"
+            return "Service Error: \(serviceError.localizedDescription)"
         }
         
         return "Unknown Error: \(error.localizedDescription)"

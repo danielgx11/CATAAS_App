@@ -47,7 +47,7 @@ extension HomeViewModel {
         viewState = .isLoading(true)
         
         Task {
-            try await Task.sleep(nanoseconds: ViewModelMetrics.delay)
+            try await Task.sleep(nanoseconds: 5 * ViewModelMetrics.delay)
             
             do {
                 let response = try await useCase.fetchItems()

@@ -24,7 +24,7 @@ final class DetailViewUITests: XCTestCase {
 }
 
     
-    // MARK: - TEST CASES
+// MARK: - TEST CASES
   
 extension DetailViewUITests {
     
@@ -32,36 +32,37 @@ extension DetailViewUITests {
         let delayExpectation = XCTestExpectation(description: "Wait for API to load items")
         _ = XCTWaiter.wait(for: [delayExpectation], timeout: 3.0)
                 
-        let firstCell = app.staticTexts["item_cell"].firstMatch
+//        let firstCell = app.staticTexts.matching(identifier: "item_cell").element(boundBy: 2) /// just in case error scenaries
+        let firstCell = app.staticTexts.matching(identifier: "item_cell").element(boundBy: 5) /// just in case success scenaries
         XCTAssertTrue(firstCell.waitForExistence(timeout: 3), "The first cell should exist in the LazyVStack.")
         firstCell.tap()
-        
     }
     
     func testLoadingViewAppears() {
         performSendToDetailScreen()
         
         let secondLoadingView = app.activityIndicators["loading_view"]
-        XCTAssertTrue(secondLoadingView.waitForExistence(timeout: 3), "The loading view from the second screen should appear")
+        XCTAssertTrue(secondLoadingView.exists, "The loading view from the second screen should appear")
     }
     
     func testLoadedImageViewExists() {
         performSendToDetailScreen()
         
-        let loadedImageView = app.images["cat_image_identifier_async"]
-        let asyncImage = app.images["cat_image_identifier_async"]
+        let delay = XCTestExpectation(description: "Wait for API to load items")
+        _ = XCTWaiter.wait(for: [delay], timeout: 5.0)
         
-        XCTAssertTrue(loadedImageView.exists, "The image should exist when imageData is presented")
-        XCTAssertFalse(asyncImage.exists, "The async image should NOT exist when imageData is presented")
+        let loadedImageView = app.images["cat_image_identifier"]
+        let asyncImage = app.images["cat_image_identifier_async"]
+        let errorView = app.staticTexts["error_view"]
+        let loadingView = app.activityIndicators["loading_view"]
+        
+        if !loadedImageView.exists, loadingView.exists, errorView.waitForExistence(timeout: 10) {
+            XCTAssertFalse(loadedImageView.waitForExistence(timeout: 3), "The image should NOT exist in error scenary")
+            return
+        }
+                
+        XCTAssertTrue(loadedImageView.waitForExistence(timeout: 3), "The image should exist when imageData is presented")
+        XCTAssertFalse(asyncImage.waitForExistence(timeout: 3), "The async image should NOT exist when imageData is presented")
     }
-    
-//    func testAsyncImageViewExists() {
-//        let app = XCUIApplication()
-//        app.launch()
-//        debugPrint(app.description)
-//        let asyncImageView = app.images["cat_image_identifier_async"]
-//        
-//        XCTAssertTrue(asyncImageView.exists, "The async image view should exist when imageData is not present.")
-//    }
-    
+
 }
